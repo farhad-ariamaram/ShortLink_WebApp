@@ -35,7 +35,12 @@ namespace ShortLink.Pages.p
 
             string destination = q.FirstOrDefault().Link;
 
-            return Redirect(destination);
+            if(destination.StartsWith("http") || destination.StartsWith("https"))
+            {
+                return Redirect(destination);
+            }
+
+            return Redirect("http://" + destination);
         }
     }
 }

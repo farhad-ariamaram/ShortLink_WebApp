@@ -8,11 +8,13 @@
     <span class="contact100-form-title">
         کوتاه کننده لینک
     </span>
+
     <div class="wrap-input100 validate-input" data-validate="این فیلد نمی‌تواند خالی باشد">
         <input class="input100 text-center" asp-for="@Model.page.Link" placeholder="https://www.google.com">
         <span class="focus-input100"></span>
     </div>
-  
+    <span class="text-center" asp-validation-for="@Model.page.Link"></span>
+    <br />
     <div class="container-contact100-form-btn">
         <div class="wrap-contact100-form-btn">
             <div class="contact100-form-bgbtn"></div>
@@ -24,3 +26,7 @@
         </div>
     </div>
 </form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
