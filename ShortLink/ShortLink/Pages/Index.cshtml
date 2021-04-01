@@ -4,19 +4,19 @@
     ViewData["Title"] = "Home page";
 }
 
-<form class="contact100-form validate-form">
+<form class="contact100-form validate-form" method="post">
     <span class="contact100-form-title">
         کوتاه کننده لینک
     </span>
     <div class="wrap-input100 validate-input" data-validate="این فیلد نمی‌تواند خالی باشد">
-        <input class="input100 text-center" type="text" name="name" placeholder="https://www.google.com">
+        <input class="input100 text-center" asp-for="@Model.page.Link" placeholder="https://www.google.com">
         <span class="focus-input100"></span>
     </div>
   
     <div class="container-contact100-form-btn">
         <div class="wrap-contact100-form-btn">
             <div class="contact100-form-bgbtn"></div>
-            <button class="contact100-form-btn">
+            <button class="contact100-form-btn" type="submit">
                 <span>
                     تبدیل به لینک کوتاه
                 </span>
