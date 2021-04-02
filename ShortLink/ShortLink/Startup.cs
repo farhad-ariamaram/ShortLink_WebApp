@@ -20,6 +20,7 @@ namespace ShortLink
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers();
             services.AddDbContext<ShortLinkDBContext>(options =>
                 options.UseSqlServer("Server=.;Database=ShortLinkDB;Trusted_Connection=True;")
                 );
@@ -46,6 +47,7 @@ namespace ShortLink
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllers();
                 endpoints.MapRazorPages();
             });
         }
