@@ -13,20 +13,17 @@ namespace ShortLink.Pages.p
     {
         private readonly ShortLinkDBContext _db;
 
-        private readonly IDetectionService _detectionService;
-
-        public IndexModel(ShortLinkDBContext db, IDetectionService detectionService)
+        public IndexModel(ShortLinkDBContext db)
         {
             _db = db;
-            _detectionService = detectionService;
 
         }
 
         public IActionResult OnGet(string id)
         {
-            if (!(_detectionService.Browser.Name.ToString().ToLower().Equals("chrome") ||
-                _detectionService.Browser.Name.ToString().ToLower().Equals("firefox") ||
-                _detectionService.Browser.Name.ToString().ToLower().Equals("safari")))
+            string userAgent = Request.Headers["User-Agent"].ToString().ToLower();
+
+            if (!_getBrowser(userAgent))
             {
                 return Page();
             }
@@ -54,5 +51,30 @@ namespace ShortLink.Pages.p
 
             return Redirect("http://" + destination);
         }
+
+        private bool _getBrowser(string userAgent)
+        {
+            if (userAgent.IndexOf("chrome") > -1)
+            {
+                if (userAgent.IndexOf("samsungbrowser") > -1)
+                {
+                    return false;
+                }
+                return true;
+            }
+
+            if (userAgent.IndexOf("firefox") > -1)
+            {
+                return true;
+            }
+
+            if (userAgent.IndexOf("safari") > -1)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
     }
 }
