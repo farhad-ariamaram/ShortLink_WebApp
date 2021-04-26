@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ShortLink.Models;
+using Wangkanai.Detection.Services;
 
 namespace ShortLink.Pages.p
 {
@@ -12,13 +13,24 @@ namespace ShortLink.Pages.p
     {
         private readonly ShortLinkDBContext _db;
 
-        public IndexModel(ShortLinkDBContext db)
+        private readonly IDetectionService _detectionService;
+
+        public IndexModel(ShortLinkDBContext db, IDetectionService detectionService)
         {
             _db = db;
+            _detectionService = detectionService;
+
         }
 
         public IActionResult OnGet(string id)
         {
+            if (!(_detectionService.Browser.Name.ToString().ToLower().Equals("chrome") ||
+                _detectionService.Browser.Name.ToString().ToLower().Equals("firefox") ||
+                _detectionService.Browser.Name.ToString().ToLower().Equals("safari")))
+            {
+                return Page();
+            }
+
             if (string.IsNullOrEmpty(id))
             {
                 return RedirectToPage("../Error");
@@ -35,7 +47,7 @@ namespace ShortLink.Pages.p
 
             string destination = q.FirstOrDefault().Link;
 
-            if(destination.StartsWith("http") || destination.StartsWith("https"))
+            if (destination.StartsWith("http") || destination.StartsWith("https"))
             {
                 return Redirect(destination);
             }
