@@ -1,0 +1,80 @@
+﻿@page
+@model ShortLink.Pages.linkg.IndexModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="row">
+    <div class="col-11">
+        <div class="form-group" id="loginbox">
+            <input class="form-control" id="username" type="text" name="password" value="" />
+            <input class="form-control btn btn-primary" type="button" name="loginbtn" value="ثبت" onclick="login()" />
+        </div>
+
+        <div class="text-center" style="display:none" id="ok">
+            <div class="form-group">
+                <input type="number" class="form-control" id="phone" name="phone" placeholder="شماره تلفن را وارد کنید" />
+                <input class="form-control btn btn-primary" type="button" name="loginbtn" value="ثبت" onclick="getlink()" />
+            </div>
+            <br />
+            <br />
+            <div class="form-group">
+                <span>لینک :</span>
+                <input class="form-control" type="text" id="linke" name="link" readonly />
+            </div>
+            <br />
+            <br />
+            <div class="form-group">
+                <input class="form-control btn btn-outline-success" type="button" value="جدید" onclick="neww()" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/swal2/sweetalert2.10.js"></script>
+<script>
+    function login() {
+        if ($("#username").val() == "123123") {
+            $("#loginbox").hide();
+            $("#ok").show();
+        }
+    }
+
+    function getlink() {
+        var data = { phone: $("#phone").val() };
+        $.ajax({
+            type: "GET",
+            url: "?handler=Phone",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            async: true,
+            data: data,
+            success: function (response) {
+                $("#linke").val(response);
+            },
+            failure: function () {
+                alert("Error on get");
+            },
+            beforeSend: function () {
+                Swal.fire({
+                    html: 'در حال بارگذاری اطلاعات، لطفا منتظر بمانید...',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    onBeforeOpen: () => {
+                        Swal.showLoading()
+                    },
+                });
+            },
+            complete: function () {
+                swal.close();
+            },
+        });
+    }
+
+    function neww() {
+        $("#linke").val("");
+        $("#phone").val("");
+    }
+
+</script>
+
