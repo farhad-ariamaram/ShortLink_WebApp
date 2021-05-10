@@ -22,10 +22,10 @@ namespace ShortLink
         {
             services.AddControllers();
             services.AddDbContext<ShortLinkDBContext>(options =>
-                options.UseSqlServer("server=.;database=ShortLinkDB;User Id=sa;Password=1;")
+                options.UseSqlServer("server=.;database=ShortLinkDB;User Id=sa;Password=S33@||;")
                 );
             services.AddDbContext<LinkDBContext>(options =>
-                options.UseSqlServer("server=.;database=EmployDB;User Id=sa;Password=1;")
+                options.UseSqlServer("server=.;database=EmployDB;User Id=sa;Password=S33@||;")
             );
             services.AddRazorPages();
         }

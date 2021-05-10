@@ -7,13 +7,13 @@
 <div class="row">
     <div class="col-11">
         <div class="form-group" id="loginbox">
-            <input class="form-control" id="username" type="text" name="password" value="" />
+            <input class="form-control" id="username" type="text" name="password" value="" /><br />
             <input class="form-control btn btn-primary" type="button" name="loginbtn" value="ثبت" onclick="login()" />
         </div>
 
         <div class="text-center" style="display:none" id="ok">
-            <div class="form-group">
-                <input type="number" class="form-control" id="phone" name="phone" placeholder="شماره تلفن را وارد کنید" />
+            <div class="form-group" dir="ltr">
+                <input type="text" class="form-control text-center" id="phone" name="phone" placeholder="شماره تلفن را وارد کنید" />
                 <input class="form-control btn btn-primary" type="button" name="loginbtn" value="ثبت" onclick="getlink()" />
             </div>
             <br />
@@ -21,6 +21,7 @@
             <div class="form-group">
                 <span>لینک :</span>
                 <input class="form-control" type="text" id="linke" name="link" readonly />
+                <button class=" btn btn-sm btn-outline-info m-2" onclick="copy()">copy</button>
             </div>
             <br />
             <br />
@@ -74,6 +75,15 @@
     function neww() {
         $("#linke").val("");
         $("#phone").val("");
+    }
+
+    function copy() {
+        var copyText = document.getElementById("linke");
+
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+
+        document.execCommand("copy");
     }
 
 </script>

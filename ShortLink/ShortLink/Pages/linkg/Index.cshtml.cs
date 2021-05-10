@@ -27,17 +27,19 @@ namespace ShortLink.Pages.linkg
 
         public async Task<IActionResult> OnGetPhoneAsync(string phone)
         {
-            string HashId = CreateMD5(phone + DateTime.Now.Ticks);
+            string newphone = phone.Replace(" ", string.Empty);
+            newphone = newphone.Substring(newphone.IndexOf('+'),13);
+            string HashId = CreateMD5(newphone + DateTime.Now.Ticks);
             while (_context.Links.Any(s => s.Id == HashId))
             {
-                HashId = CreateMD5(phone + DateTime.Now.Ticks);
+                HashId = CreateMD5(newphone + DateTime.Now.Ticks);
             }
 
             Link link = new Link()
             {
                 Id = HashId,
                 ExpireDate = DateTime.Now.AddDays(1),
-                Phone = phone
+                Phone = newphone
             };
 
             _context.Links.Add(link);
