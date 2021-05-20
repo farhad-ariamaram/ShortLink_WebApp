@@ -16,5 +16,8 @@ namespace ShortLink.Models
         [DataAnnotationsExtensions.Url(UrlOptions.OptionalProtocol, ErrorMessage = "فرمت لینک وارد شده صحیح نمی‌باشد")]
         public string Link { get; set; }
         public DateTime CreatedDate { get; set; }
+
+
+        public List<Log> Logs { get; set; }
     }
 }

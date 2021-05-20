@@ -19,6 +19,8 @@ namespace ShortLink.Models
 
         public virtual DbSet<Page> Pages { get; set; }
 
+        public virtual DbSet<Log> Logs { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("Relational:Collation", "Arabic_CI_AS");

@@ -22,6 +22,8 @@ namespace ShortLink.Pages.p
         public IActionResult OnGet(string id)
         {
             string userAgent = Request.Headers["User-Agent"].ToString().ToLower();
+            string ip = HttpContext.Connection.RemoteIpAddress.ToString();
+            string browser = GetBrowserNameWithVersion(userAgent);
 
             if (!_getBrowser(userAgent))
             {
@@ -41,6 +43,8 @@ namespace ShortLink.Pages.p
             {
                 return RedirectToPage("../Error");
             }
+
+            LogUser(q.FirstOrDefault().Id, browser, ip, userAgent);
 
             string destination = q.FirstOrDefault().Link;
 
@@ -76,5 +80,24 @@ namespace ShortLink.Pages.p
             return false;
         }
 
+        private void LogUser(long pageid, string browser, string ip, string ua)
+        {
+            Log t = new Log()
+            {
+                PageId = pageid,
+                Date = DateTime.Now,
+                Browser = browser,
+                Ip = ip,
+                UserAgent = ua
+            };
+
+            _db.Logs.Add(t);
+            _db.SaveChanges();
+        }
+
+        private string GetBrowserNameWithVersion(string ua)
+        {
+            return "";
+        }
     }
 }
