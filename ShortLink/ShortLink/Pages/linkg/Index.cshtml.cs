@@ -47,7 +47,7 @@ namespace ShortLink.Pages.linkg
 
             string realLink = "http://185.118.152.61/" + HashId;
             string[] shortedLink = Shortlink("http://185.118.152.61:8081/api/Page/" + realLink).Split(':');
-            string shortlinke = "http://" + (shortedLink[1] + ":" + shortedLink[2]).Replace("\"", string.Empty).Replace("}", string.Empty);
+            string shortlinke = "http://microsoftrazorpage.blogfa.com/page/hello?url=http://" + (shortedLink[1] + ":" + shortedLink[2]).Replace("\"", string.Empty).Replace("}", string.Empty);
 
             return new JsonResult(shortlinke);
         }
