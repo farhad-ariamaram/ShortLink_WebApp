@@ -5,86 +5,218 @@
 }
 
 <div class="row">
-    <div class="col-11">
-        <div class="form-group" id="loginbox">
-            <input class="form-control" id="username" type="text" name="password" value="" /><br />
-            <input class="form-control btn btn-primary" type="button" name="loginbtn" value="ثبت" onclick="login()" />
-        </div>
+    @if (bool.Parse(ViewData["login"].ToString()) == false)
+    {
 
-        <div class="text-center" style="display:none" id="ok">
-            <div class="form-group" dir="ltr">
-                <input type="text" class="form-control text-center" id="phone" name="phone" placeholder="شماره تلفن را وارد کنید" />
-                <input class="form-control btn btn-primary" type="button" name="loginbtn" value="ثبت" onclick="getlink()" />
+
+        <div class="col-11">
+            @if (ViewData["wrongp"] != null)
+            {
+                <div class="row">
+                    <div class="alert alert-danger">پسورد وارد شده اشتباه است</div>
+                </div>
+            }
+            <form method="get">
+                <div class="form-group">
+                    <input class="form-control" id="password" type="text" name="password" placeholder="پسورد" />
+                </div>
+                <input class="form-control btn btn-primary" type="submit" value="ورود" />
+            </form>
+        </div>
+    }
+    else
+    {
+        <div class="col-11">
+
+            @if (ViewData["wrongf"] != null)
+            {
+                <div class="row">
+                    <div class="alert alert-danger">فرمت وارد شده اشتباه است</div>
+                </div>
+            }
+
+            @if (ViewData["wrongl"] != null)
+            {
+                <div class="row">
+                    <div class="alert alert-danger">مشکل در برقراری ارتباط با سرور</div>
+                </div>
+            }
+
+            @if (ViewData["sms"] != null)
+            {
+                @if (ViewData["sms"].ToString() == "true")
+                {
+                    <div class="row">
+                        <div class="alert alert-success">اس ام اس ارسال شد</div>
+                    </div>
+                }
+                else
+                {
+                    <div class="row">
+                        <div class="alert alert-danger">اس ام اس ارسال نشد</div>
+                    </div>
+                }
+            }
+
+            <div class="row">
+                <div class="alert alert-info">شماره تلفن را به صورت 989181234567+ وارد کنید</div>
             </div>
-            <br />
-            <br />
-            <div class="form-group">
-                <span>لینک :</span>
-                <input class="form-control" type="text" id="linke" name="link" readonly />
-                <button class=" btn btn-sm btn-outline-info m-2" onclick="copy()">copy</button>
-            </div>
-            <br />
-            <br />
-            <div class="form-group">
-                <input class="form-control btn btn-outline-success" type="button" value="جدید" onclick="neww()" />
+
+            <div class="row text-center">
+                <form id="myForm2" class="w-100" method="get">
+                    <div class="form-group ">
+                        <input type="hidden" name="password" value="123123" />
+                        <input dir="ltr" type="text" class="form-control text-center" id="phone" name="phone" placeholder="شماره تلفن را وارد کنید" value="@Model.currentphone" />
+                        <input class="btn btn-primary mt-1" type="submit" value="ثبت" onclick="submit()" />
+                    </div>
+                    <hr />
+                    @if (Model.currentlink != null)
+                    {
+                        <div class="form-group row">
+                            <label class="col-2" for="link">لینک:</label>
+                            <input dir="ltr" class="form-control col-9" type="text" id="link" name="link" value="@Model.currentlink" readonly />
+                            <div class="col-1"><button class="btn btn-sm btn-outline-info m-2" onclick="copy()">کپی</button></div>
+                        </div>
+                        <div class="form-group">
+                            <a class="btn btn-warning" asp-page="./Index" asp-route-link="@Model.currentlink" asp-route-password="123123" asp-route-phone="@Model.currentphone" asp-route-sms="1">لینک sms شود</a>
+                        </div>
+                        <div class="form-group">
+                            <a class="btn btn-link" asp-page="./Index" asp-route-password="123123" asp-route-sms="0">جدید</a>
+                        </div>
+                    }
+                </form>
             </div>
         </div>
-    </div>
+    }
 </div>
 
 <script src="~/lib/swal2/sweetalert2.10.js"></script>
 <script>
-    function login() {
-        if ($("#username").val() == "123123") {
-            $("#loginbox").hide();
-            $("#ok").show();
-        }
-    }
-
-    function getlink() {
-        var data = { phone: $("#phone").val() };
-        $.ajax({
-            type: "GET",
-            url: "?handler=Phone",
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            async: true,
-            data: data,
-            success: function (response) {
-                $("#linke").val(response);
-            },
-            failure: function () {
-                alert("Error on get");
-            },
-            beforeSend: function () {
-                Swal.fire({
-                    html: 'در حال بارگذاری اطلاعات، لطفا منتظر بمانید...',
-                    allowOutsideClick: false,
-                    showConfirmButton: false,
-                    onBeforeOpen: () => {
-                        Swal.showLoading()
-                    },
-                });
-            },
-            complete: function () {
-                swal.close();
-            },
+    window.onload = (event) => {
+        var formm = document.getElementById("myForm2");
+        formm.addEventListener('submit', function myfunction() {
+            Swal.fire({
+                html: 'در حال بارگذاری اطلاعات، لطفا منتظر بمانید...',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                onBeforeOpen: () => {
+                    Swal.showLoading()
+                },
+            });
         });
-    }
-
-    function neww() {
-        $("#linke").val("");
-        $("#phone").val("");
-    }
+    };
+    
 
     function copy() {
-        var copyText = document.getElementById("linke");
+        var copyText = document.getElementById("link");
 
         copyText.select();
         copyText.setSelectionRange(0, 99999);
 
         document.execCommand("copy");
     }
-
 </script>
+
+@*<div class="row">
+        <div class="col-11">
+            <div class="form-group" id="loginbox">
+                <input class="form-control" id="username" type="text" name="password" value="" /><br />
+                <input class="form-control btn btn-primary" type="button" name="loginbtn" value="ثبت" onclick="login()" />
+            </div>
+
+            <div class="text-center" style="display:none" id="ok">
+                <div class="col-12" id="wrongf">
+                    <div class="alert alert-danger">فرمت وارد شده اشتباه است</div>
+                </div>
+                <div class="col-12">
+                    <div class="alert alert-info">شماره تلفن را به صورت 989181234567+ وارد کنید</div>
+                </div>
+                <div class="form-group" dir="ltr">
+                    <input type="text" class="form-control text-center" id="phone" name="phone" placeholder="شماره تلفن را وارد کنید" />
+                    <input class="form-control btn btn-primary" type="button" name="loginbtn" value="ثبت" onclick="getlink()" />
+                </div>
+                <br />
+                <br />
+                <div class="form-group">
+                    <span>لینک :</span>
+                    <input class="form-control" type="text" id="linke" name="link" readonly />
+                    <button class=" btn btn-sm btn-outline-info m-2" onclick="copy()">copy</button>
+                </div>
+                <br />
+                <br />
+                <div class="form-group">
+                    <input class="form-control btn btn-outline-success" type="button" value="جدید" onclick="neww()" />
+                </div>
+                <form asp-page-handler="" method="get">
+                    <div class="form-group">
+                        <input class="btn btn-warning" type="submit" value="لینک sms شود" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/swal2/sweetalert2.10.js"></script>
+    <script>
+        function login() {
+            if ($("#username").val() == "123123") {
+                $("#loginbox").hide();
+                $("#ok").show();
+                $("#wrongf").hide();
+
+            }
+        }
+
+        function getlink() {
+            $("#wrongf").hide();
+            var data = { phone: $("#phone").val() };
+            $.ajax({
+                type: "GET",
+                url: "?handler=Phone",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                async: true,
+                data: data,
+                success: function (response) {
+                    if (response == false) {
+                        $("#wrongf").show();
+                    } else {
+                        $("#linke").val(response);
+                    }
+                },
+                failure: function () {
+                    alert("Error on get");
+                },
+                beforeSend: function () {
+                    Swal.fire({
+                        html: 'در حال بارگذاری اطلاعات، لطفا منتظر بمانید...',
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        onBeforeOpen: () => {
+                            Swal.showLoading()
+                        },
+                    });
+                },
+                complete: function () {
+                    swal.close();
+                },
+            });
+        }
+
+        function neww() {
+            $("#linke").val("");
+            $("#phone").val("");
+            $("#wrongf").hide();
+        }
+
+        function copy() {
+            var copyText = document.getElementById("linke");
+
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+
+            document.execCommand("copy");
+        }
+
+    </script>*@
 
