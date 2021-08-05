@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -25,6 +28,7 @@ namespace ShortLink.Pages.linkg
 
         public async Task<IActionResult> OnGetAsync(string password, string phone, string sms, string link)
         {
+
             if (string.IsNullOrEmpty(password))
             {
                 ViewData["login"] = false;
@@ -59,9 +63,24 @@ namespace ShortLink.Pages.linkg
             {
                 if (sms == "1")
                 {
-                    ViewData["login"] = true;
-                    ViewData["sms"] = "true";
-                    currentlink = link;
+                    var smsRes = await send(phone.Replace(" ", string.Empty), link);
+                    if (smsRes)
+                    {
+                        ///////////////////////////////////////////////////////////////////
+                        ///save to database and chack for repeated
+                        ///////////////////////////////////////////////////////////////////
+
+                        ViewData["login"] = true;
+                        ViewData["sms"] = "true";
+                        currentlink = link;
+                    }
+                    else
+                    {
+                        ViewData["login"] = true;
+                        ViewData["sms"] = "False";
+                        currentlink = link;
+                    }
+
                     return Page();
                 }
             }
@@ -119,7 +138,7 @@ namespace ShortLink.Pages.linkg
             {
                 return null;
             }
-            
+
         }
 
         public async Task<IActionResult> OnGetSendSmsAsync()
@@ -159,6 +178,42 @@ namespace ShortLink.Pages.linkg
             return text;
         }
 
+        //send sms
+        //string baseUrl = "http://185.118.152.61:8081/api/Sms/";
+        string baseUrl = "http://192.168.10.247:5000/api/Sms/";
+        public async Task<bool> send(string phone, string body)
+        {
+            using (var client = new HttpClient())
+            {
+                try
+                {
+                    client.BaseAddress = new Uri($"{baseUrl}send?phone={phone}&body={body}");
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    HttpResponseMessage response = await client.GetAsync("");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string res = await response.Content.ReadAsStringAsync();
+                        if (res == "true")
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return false;
+                }
 
+            }
+        }
     }
 }
