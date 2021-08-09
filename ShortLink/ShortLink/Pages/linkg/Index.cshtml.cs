@@ -16,9 +16,9 @@ namespace ShortLink.Pages.linkg
 {
     public class IndexModel : PageModel
     {
-        private readonly LinkDBContext _context;
+        private readonly LinkDbContext _context;
 
-        public IndexModel(LinkDBContext context)
+        public IndexModel(LinkDbContext context)
         {
             _context = context;
         }
@@ -31,13 +31,13 @@ namespace ShortLink.Pages.linkg
 
             if (string.IsNullOrEmpty(password))
             {
-                ViewData["login"] = false;
+                ViewData["login"] = null;
                 return Page();
             }
 
             if (password != "123123")
             {
-                ViewData["login"] = false;
+                ViewData["login"] = null;
                 ViewData["wrongp"] = false;
                 return Page();
             }
@@ -63,12 +63,30 @@ namespace ShortLink.Pages.linkg
             {
                 if (sms == "1")
                 {
-                    var smsRes = await send(phone.Replace(" ", string.Empty), link);
+                    var ph = phone.Replace(" ", string.Empty);
+                    var t = _context.TblSmsSents.Where(a => a.Phone == ph);
+                    if (t.Any())
+                    {
+                        ViewData["repeated"] = true;
+                        ViewData["login"] = true;
+                        ViewData["sms"] = "False";
+                        currentlink = link;
+                        return Page();
+                    }
+
+                    var msg = "لینک ثبت نام:\n" + "http://" + link;
+
+                    var smsRes = await send(phone.Replace(" ", string.Empty), msg);
                     if (smsRes)
                     {
-                        ///////////////////////////////////////////////////////////////////
-                        ///save to database and chack for repeated
-                        ///////////////////////////////////////////////////////////////////
+                        await _context.AddAsync(new TblSmsSent
+                        {
+                            Date = DateTime.Now,
+                            Phone = ph,
+                            Message = link
+                        });
+
+                        await _context.SaveChangesAsync();
 
                         ViewData["login"] = true;
                         ViewData["sms"] = "true";
@@ -113,24 +131,24 @@ namespace ShortLink.Pages.linkg
                 string newphone = phone.Replace(" ", string.Empty);
                 newphone = newphone.Substring(newphone.IndexOf('+'), 13);
                 string HashId = CreateMD5(newphone + DateTime.Now.Ticks);
-                while (_context.Links.Any(s => s.Id == HashId))
+                while (_context.TblLinks.Any(s => s.Id == HashId))
                 {
                     HashId = CreateMD5(newphone + DateTime.Now.Ticks);
                 }
 
-                Link link = new Link()
+                TblLink link = new TblLink()
                 {
                     Id = HashId,
                     ExpireDate = DateTime.Now.AddDays(1),
                     Phone = newphone
                 };
 
-                await _context.Links.AddAsync(link);
+                await _context.TblLinks.AddAsync(link);
                 await _context.SaveChangesAsync();
 
                 string realLink = "http://185.118.152.61/" + HashId;
                 string[] shortedLink = Shortlink("http://185.118.152.61:8081/api/Page/" + realLink).Split(':');
-                string shortlinke = "http://microsoftrazorpage.blogfa.com/page/hello?url=http://" + (shortedLink[1] + ":" + shortedLink[2]).Replace("\"", string.Empty).Replace("}", string.Empty);
+                string shortlinke = (shortedLink[1] + ":" + shortedLink[2]).Replace("\"", string.Empty).Replace("}", string.Empty);
 
                 return shortlinke;
             }

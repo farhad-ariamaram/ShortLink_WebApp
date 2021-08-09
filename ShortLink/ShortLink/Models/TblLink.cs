@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+
+#nullable disable
 
 namespace ShortLink.Models
 {
-    public class Link
+    public partial class TblLink
     {
-        [Key]
         public string Id { get; set; }
         public DateTime? ExpireDate { get; set; }
         public string Phone { get; set; }
