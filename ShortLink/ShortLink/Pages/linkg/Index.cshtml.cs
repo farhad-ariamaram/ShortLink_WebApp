@@ -197,8 +197,8 @@ namespace ShortLink.Pages.linkg
         }
 
         //send sms
-        //string baseUrl = "http://185.118.152.61:8081/api/Sms/";
-        string baseUrl = "http://192.168.10.247:5000/api/Sms/";
+        string baseUrl = "http://185.118.152.61:8081/api/Sms/";
+        //string baseUrl = "http://192.168.10.247:5000/api/Sms/";
         public async Task<bool> send(string phone, string body)
         {
             using (var client = new HttpClient())
