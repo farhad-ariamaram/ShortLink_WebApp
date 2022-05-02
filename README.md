@@ -1,4 +1,4 @@
 # ShortLink_WebApp
-ASP .NET Core Razor Page
-Web API
-SQL Server
+ASP .NET Core Razor Page <br>
+Web API <br>
+SQL Server <br>
